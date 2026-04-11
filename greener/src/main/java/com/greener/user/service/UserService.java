@@ -1,5 +1,6 @@
 package com.greener.user.service;
 
+import com.greener.exception.BadRequestException;
 import com.greener.user.dto.LoginRequest;
 import com.greener.user.dto.RegisterRequest;
 import com.greener.user.dto.UserResponse;
@@ -19,23 +20,21 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    // 🔹 Create User
     public UserResponse createUser(RegisterRequest request) {
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new BadRequestException("Email already exists");
         }
 
         User user = userMapper.toEntity(request);
 
-        user.setPassword(request.getPassword()); // ❌ بدون hashing
+        user.setPassword(request.getPassword());
         user.setRole(Role.USER);
         user.setPoints(0);
 
         return userMapper.toResponse(userRepository.save(user));
     }
 
-    // 🔹 Get All Users
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll()
                 .stream()
@@ -43,31 +42,28 @@ public class UserService {
                 .toList();
     }
 
-    // 🔹 Register
     public UserResponse register(RegisterRequest request) {
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new BadRequestException("Email already exists");
         }
 
         User user = userMapper.toEntity(request);
 
-        user.setPassword(request.getPassword()); // ❌ بدون hashing
+        user.setPassword(request.getPassword());
         user.setRole(Role.USER);
         user.setPoints(0);
 
         return userMapper.toResponse(userRepository.save(user));
     }
 
-    // 🔹 Login
     public UserResponse login(LoginRequest request) {
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+                .orElseThrow(() -> new BadRequestException("Invalid credentials"));
 
-        // 🔥 مقارنة مباشرة بدون BCrypt
         if (!user.getPassword().equals(request.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+            throw new BadRequestException("Invalid credentials");
         }
 
         return userMapper.toResponse(user);
