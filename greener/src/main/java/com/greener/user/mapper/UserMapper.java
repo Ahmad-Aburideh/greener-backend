@@ -8,9 +8,18 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "points", ignore = true)
     User toEntity(RegisterRequest request);
-    UserResponse toResponse(User user);
+
+    default UserResponse toResponse(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .points(user.getPoints())
+                .build();
+    }
 }
