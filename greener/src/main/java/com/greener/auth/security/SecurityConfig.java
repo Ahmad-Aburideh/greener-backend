@@ -10,7 +10,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 
 @Configuration
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     @Bean
@@ -19,7 +18,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()   // 🔥 مهم جداً للتجربة
+                        .anyRequest().permitAll()
                 );
 
         return http.build();
