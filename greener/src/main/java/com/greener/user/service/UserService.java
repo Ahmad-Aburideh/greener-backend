@@ -59,6 +59,7 @@ public class UserService {
 
         User existingUser = userRepository.findByEmail(request.getEmail()).orElse(null);
 
+        // 🔥 إذا المستخدم موجود
         if (existingUser != null) {
 
             if (existingUser.isVerified()) {
@@ -74,12 +75,17 @@ public class UserService {
 
             verificationTokenRepository.save(verificationToken);
 
-            emailService.sendVerificationEmail(existingUser.getEmail(), token);
+            // 🔥 FIX هنا
+            try {
+                emailService.sendVerificationEmail(existingUser.getEmail(), token);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             return userMapper.toResponse(existingUser);
         }
 
-        // 🔥 user جديد (بدون mapper)
+        // 🔥 user جديد
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
@@ -88,7 +94,6 @@ public class UserService {
         user.setPoints(0);
         user.setVerified(false);
 
-        // 🔥 هون المكان الصح
         User savedUser = userRepository.save(user);
 
         String token = UUID.randomUUID().toString();
@@ -102,7 +107,12 @@ public class UserService {
 
         System.out.println("EMAIL: " + savedUser.getEmail());
 
-        emailService.sendVerificationEmail(savedUser.getEmail(), token);
+        // 🔥 FIX هنا
+        try {
+            emailService.sendVerificationEmail(savedUser.getEmail(), token);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return userMapper.toResponse(savedUser);
     }
