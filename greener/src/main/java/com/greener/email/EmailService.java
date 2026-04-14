@@ -15,7 +15,7 @@ public class EmailService {
 
     public void sendVerificationEmail(String toEmail, String token) {
 
-        String link = "https://backdrop-mug-sinister.ngrok-free.dev/api/auth/verify?token=" + token;
+        String link = "https://greener-backend-production-edcc.up.railway.app/api/auth/verify?token=" + token;
 
         try {
             MimeMessage message = mailSender.createMimeMessage();
